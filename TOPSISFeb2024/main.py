@@ -1,5 +1,6 @@
 # Experimento TOPSIS
 # ACtualizado Feb-2024
+from traceback import TracebackException
 
 import pandas as pd
 import numpy as np
@@ -142,7 +143,7 @@ dataT = pd.DataFrame(dT)
 dataAlt = pd.DataFrame(Alt)
 dataw = pd.DataFrame(w)
 
-with pd.ExcelWriter(r'C:TOPSIS Feb2024', engine='xlsxwriter') as writer:
+with pd.ExcelWriter(r'D:\TOPSIS\TOPSISFeb2024\Experimentos\Experimentos.xlsx', engine='xlsxwriter') as writer:
     # dataI.to_excel(writer, sheet_name='Iniciales')
     dataT.to_excel(writer, sheet_name='Tiempos')
     dataw.to_excel(writer, sheet_name='w')
@@ -160,11 +161,41 @@ print("Hora de finalización:", hora_fin.time())
 print("Tiempo de ejecución:", ejecut)
 print()
 
-num_alternativas = 5
-num_criterios = 4
-max = 0.9
-min = 0.1
 
-matriz_decision = np.random.uniform(min, max, size=(num_alternativas, num_criterios))
+# se pidio al usuario que ingrese el numero de columnas y filas y se imprimen los valores de manera aleatoria entre el 0.1 y 0.9
+max = 0.9;
+min = 0.1;
 
-print(matriz_decision)
+num_alternativas = int (input("Ingrese el numero de alternativas: "));
+num_criterios = int (input("\nIngrese el numero de criterios: "));
+
+matriz_decision = np.random.uniform(min, max, size=(num_alternativas, num_criterios));
+
+print(matriz_decision);
+w2 = []
+suma_pesos = 0  # suma de W
+
+print("Insercion de datos")
+
+for i in range(num_alternativas):
+    while True:
+        try:
+            elemento = float(input(f"\nIngrese el peso del atributo para la alternativa {i + 1}: "))
+            if 0 <= elemento <= 1:  # verificar de que el peso entre 0 y 1
+                if suma_pesos + elemento > 1:  # Validación de que la suma no exceda 1
+                    print(f"La suma total de los pesos no puede exceder 1. Peso actual ingresado: {suma_pesos}")
+                else:
+                    w2.append(elemento)
+                    suma_pesos += elemento  # acumulador
+                    break
+            else:
+                print("El valor debe estar entre 0 y 1. Por favor, intente nuevamente.")
+        except ValueError:
+            print("Entrada no válida. Por favor, ingrese un número.")
+
+# Convertir la lista de pesos en un array de Numpy y luego en una Serie de Pandas
+w2 = np.array(w2)
+weights2 = pd.Series(w2, index=range(num_alternativas))
+
+print("\nPesos de los atributos:")
+print(weights2)
